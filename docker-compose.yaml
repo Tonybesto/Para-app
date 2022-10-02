@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  backend:
+    build: .
+    ports:
+      - 8080:8080
+    environment:
+      LOCAL: "true"
+      PORT: 8080
+      DATABASE_URL: postgresql://postgres:donotshare@postgresql/paramount?sslmode=disable
+      ACCOUNT_SID: AC382ade5884f48da1ffeb11f3af2054bc
+      AUTH_TOKEN: 6ab8cd66b65527f0085ec281a8a138e8
+      TO_PHONE: "+2347050884002"
+      FROM_PHONE: "+18557042767"
+    depends_on:
+      - postgres
+
+
+  postgres:
+    container_name: postgresql
+    image: postgres
+    restart: always
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: donotshare
+      POSTGRES_DB: paramount
+
+
+
+

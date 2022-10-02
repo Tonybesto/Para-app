@@ -1,0 +1,633 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a lunch wallet server.",
+        "title": "Lunch Wallet Swagger API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Lunch-wallet Team API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "info@lunchwallet.com"
+        },
+        "license": {
+            "name": "BSD",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/create_high_schools": {
+            "post": {
+                "description": "Collects student's high school details during registration and uses it to create a new high school in the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "HighSchool"
+                ],
+                "summary": "user creates high school",
+                "parameters": [
+                    {
+                        "description": "school, country, city, address, postal",
+                        "name": "HighSchool",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.HighSchool"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "created successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_high_schools": {
+            "get": {
+                "description": "This displays all the available high schools in the database for students to choose from during registration.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "HighSchool"
+                ],
+                "summary": "Lists all the high schools in the database",
+                "responses": {
+                    "200": {
+                        "description": "found successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/get_profile": {
+            "get": {
+                "description": "This displays whatever information of the student captured during registration. It is a STUDENT AUTHENTICATED ROUTE. Therefore, it uses the access token gotten from LoginStudentHandler and VerifyPhoneLoginStudentHandler as bearer token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "HighSchool"
+                ],
+                "summary": "Displays all the information of the student available in the database",
+                "responses": {
+                    "200": {
+                        "description": "found successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/login/phone": {
+            "post": {
+                "description": "After a student Login with phone_number and password, a code is sent to the student for the student to use in VerifyPhoneLoginStudentHandler. Also note that the access token gotten from this endpoint will serve as bearer token for VerifyPhoneLoginStudentHandler. Default password is 12345678",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Student Login with phone_number and password",
+                "parameters": [
+                    {
+                        "description": "phone_number, password",
+                        "name": "UserLogin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PhoneLoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Enter the verification code sent to your phone",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/mobile/phone/verify": {
+            "post": {
+                "description": "Uses the code sent while logging in with PhoneLoginStudentHandler to log student in. It uses the access token gotten from PhoneLoginStudentHandler as its bearer token and in return, provides another access token while using any STUDENT AUTHENTICATED ROUTE.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Verifies that student logging with phone number has the code to log into the App",
+                "parameters": [
+                    {
+                        "description": "verification_code",
+                        "name": "PhoneLoginCode",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.PhoneLoginCode"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "login successful",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "registers/creates student in the database by collecting form data in model.Student. Note: \"files\"  are to be uploaded in jpeg, png or pdf.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Student registers to use the app",
+                "parameters": [
+                    {
+                        "description": "every field can be filled or omitted as form data as decided from the frontend",
+                        "name": "Student",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Student"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "account created successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/student_login": {
+            "post": {
+                "description": "Allows student access to use the app after logging in with email and password. Logging in provides an access token that will be used as bearer token while using any STUDENT AUTHENTICATED ROUTE. Default password is 12345678",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Student"
+                ],
+                "summary": "Student Login with email and password",
+                "parameters": [
+                    {
+                        "description": "email, password",
+                        "name": "UserLogin",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UserLogin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "login successful",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/update_profile": {
+            "put": {
+                "description": "After registering and logging in with a default password of 12345678. Students can change their password (or any field from model.Student as provided by the frontend). It is a STUDENT AUTHENTICATED ROUTE. Therefore, it uses the access token gotten from LoginStudentHandler and VerifyPhoneLoginStudentHandler as bearer token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Student"
+                ],
+                "summary": "This is used to update student's profile",
+                "parameters": [
+                    {
+                        "description": "password",
+                        "name": "HighSchool",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.Student"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully Updated",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.Certificate": {
+            "type": "object",
+            "properties": {
+                "student_Id": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.HighSchool": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "postal": {
+                    "type": "string"
+                },
+                "school": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Language": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.LocalId": {
+            "type": "object",
+            "properties": {
+                "student_Id": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Passport": {
+            "type": "object",
+            "properties": {
+                "student_Id": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PhoneLoginCode": {
+            "type": "object",
+            "required": [
+                "verification_code"
+            ],
+            "properties": {
+                "verification_code": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.PhoneLoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "phone_number"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Photo": {
+            "type": "object",
+            "properties": {
+                "student_Id": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Student": {
+            "type": "object",
+            "properties": {
+                "certificates": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Certificate"
+                    }
+                },
+                "citizenship": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "country_of_residence": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "date_of_birth": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "expiry_date": {
+                    "type": "string"
+                },
+                "father_name": {
+                    "type": "string"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "graduation_date": {
+                    "type": "string"
+                },
+                "highSchool": {
+                    "$ref": "#/definitions/model.HighSchool"
+                },
+                "high_school_country": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "id_number": {
+                    "type": "string"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "is_block": {
+                    "type": "boolean"
+                },
+                "issue_date": {
+                    "type": "string"
+                },
+                "language": {
+                    "$ref": "#/definitions/model.Language"
+                },
+                "local_ids": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.LocalId"
+                    }
+                },
+                "majors": {
+                    "type": "string"
+                },
+                "mother_name": {
+                    "type": "string"
+                },
+                "passport": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Passport"
+                    }
+                },
+                "passport_number": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "password_hash": {
+                    "type": "string"
+                },
+                "phone_number": {
+                    "type": "string"
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Photo"
+                    }
+                },
+                "postal_code": {
+                    "type": "string"
+                },
+                "region": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "student_id": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "transcripts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Transcript"
+                    }
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "verification_code": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.Transcript": {
+            "type": "object",
+            "properties": {
+                "student_Id": {
+                    "type": "integer"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UserLogin": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    }
+}

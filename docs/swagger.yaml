@@ -1,0 +1,435 @@
+basePath: /api/v1
+definitions:
+  model.Certificate:
+    properties:
+      student_Id:
+        type: integer
+      url:
+        type: string
+    type: object
+  model.HighSchool:
+    properties:
+      address:
+        type: string
+      city:
+        type: string
+      country:
+        type: string
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
+      id:
+        type: integer
+      postal:
+        type: string
+      school:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  model.Language:
+    properties:
+      language:
+        type: string
+    type: object
+  model.LocalId:
+    properties:
+      student_Id:
+        type: integer
+      url:
+        type: string
+    type: object
+  model.Passport:
+    properties:
+      student_Id:
+        type: integer
+      url:
+        type: string
+    type: object
+  model.PhoneLoginCode:
+    properties:
+      verification_code:
+        type: string
+    required:
+    - verification_code
+    type: object
+  model.PhoneLoginRequest:
+    properties:
+      password:
+        type: string
+      phone_number:
+        type: string
+    required:
+    - password
+    - phone_number
+    type: object
+  model.Photo:
+    properties:
+      student_Id:
+        type: integer
+      url:
+        type: string
+    type: object
+  model.Student:
+    properties:
+      certificates:
+        items:
+          $ref: '#/definitions/model.Certificate'
+        type: array
+      citizenship:
+        type: string
+      city:
+        type: string
+      country_of_residence:
+        type: string
+      createdAt:
+        type: string
+      date_of_birth:
+        type: string
+      deletedAt:
+        type: string
+      email:
+        type: string
+      expiry_date:
+        type: string
+      father_name:
+        type: string
+      full_name:
+        type: string
+      gender:
+        type: string
+      graduation_date:
+        type: string
+      high_school_country:
+        type: string
+      highSchool:
+        $ref: '#/definitions/model.HighSchool'
+      id:
+        type: integer
+      id_number:
+        type: string
+      is_active:
+        type: boolean
+      is_block:
+        type: boolean
+      issue_date:
+        type: string
+      language:
+        $ref: '#/definitions/model.Language'
+      local_ids:
+        items:
+          $ref: '#/definitions/model.LocalId'
+        type: array
+      majors:
+        type: string
+      mother_name:
+        type: string
+      passport:
+        items:
+          $ref: '#/definitions/model.Passport'
+        type: array
+      passport_number:
+        type: string
+      password:
+        type: string
+      password_hash:
+        type: string
+      phone_number:
+        type: string
+      photos:
+        items:
+          $ref: '#/definitions/model.Photo'
+        type: array
+      postal_code:
+        type: string
+      region:
+        type: string
+      status:
+        type: string
+      student_id:
+        type: string
+      token:
+        type: string
+      transcripts:
+        items:
+          $ref: '#/definitions/model.Transcript'
+        type: array
+      updatedAt:
+        type: string
+      verification_code:
+        type: integer
+    type: object
+  model.Transcript:
+    properties:
+      student_Id:
+        type: integer
+      url:
+        type: string
+    type: object
+  model.UserLogin:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: info@lunchwallet.com
+    name: Lunch-wallet Team API Support
+    url: http://www.swagger.io/support
+  description: This is a lunch wallet server.
+  license:
+    name: BSD
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Lunch Wallet Swagger API
+  version: "1.0"
+paths:
+  /create_high_schools:
+    post:
+      consumes:
+      - application/json
+      description: Collects student's high school details during registration and
+        uses it to create a new high school in the database.
+      parameters:
+      - description: school, country, city, address, postal
+        in: body
+        name: HighSchool
+        required: true
+        schema:
+          $ref: '#/definitions/model.HighSchool'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: created successfully
+          schema:
+            type: string
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: user creates high school
+      tags:
+      - HighSchool
+  /get_high_schools:
+    get:
+      consumes:
+      - application/json
+      description: This displays all the available high schools in the database for
+        students to choose from during registration.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: found successfully
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Lists all the high schools in the database
+      tags:
+      - HighSchool
+  /get_profile:
+    get:
+      consumes:
+      - application/json
+      description: This displays whatever information of the student captured during
+        registration. It is a STUDENT AUTHENTICATED ROUTE. Therefore, it uses the
+        access token gotten from LoginStudentHandler and VerifyPhoneLoginStudentHandler
+        as bearer token.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: found successfully
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Displays all the information of the student available in the database
+      tags:
+      - HighSchool
+  /login/phone:
+    post:
+      consumes:
+      - application/json
+      description: After a student Login with phone_number and password, a code is
+        sent to the student for the student to use in VerifyPhoneLoginStudentHandler.
+        Also note that the access token gotten from this endpoint will serve as bearer
+        token for VerifyPhoneLoginStudentHandler. Default password is 12345678
+      parameters:
+      - description: phone_number, password
+        in: body
+        name: UserLogin
+        required: true
+        schema:
+          $ref: '#/definitions/model.PhoneLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Enter the verification code sent to your phone
+          schema:
+            type: string
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Student Login with phone_number and password
+      tags:
+      - Student
+  /mobile/phone/verify:
+    post:
+      consumes:
+      - application/json
+      description: Uses the code sent while logging in with PhoneLoginStudentHandler
+        to log student in. It uses the access token gotten from PhoneLoginStudentHandler
+        as its bearer token and in return, provides another access token while using
+        any STUDENT AUTHENTICATED ROUTE.
+      parameters:
+      - description: verification_code
+        in: body
+        name: PhoneLoginCode
+        required: true
+        schema:
+          $ref: '#/definitions/model.PhoneLoginCode'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: login successful
+          schema:
+            type: string
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Verifies that student logging with phone number has the code to log
+        into the App
+      tags:
+      - Student
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: 'registers/creates student in the database by collecting form data
+        in model.Student. Note: "files"  are to be uploaded in jpeg, png or pdf.'
+      parameters:
+      - description: every field can be filled or omitted as form data as decided
+          from the frontend
+        in: body
+        name: Student
+        required: true
+        schema:
+          $ref: '#/definitions/model.Student'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: account created successfully
+          schema:
+            type: string
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Student registers to use the app
+      tags:
+      - Student
+  /student_login:
+    post:
+      consumes:
+      - application/json
+      description: Allows student access to use the app after logging in with email
+        and password. Logging in provides an access token that will be used as bearer
+        token while using any STUDENT AUTHENTICATED ROUTE. Default password is 12345678
+      parameters:
+      - description: email, password
+        in: body
+        name: UserLogin
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: login successful
+          schema:
+            type: string
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: Student Login with email and password
+      tags:
+      - Student
+  /update_profile:
+    put:
+      consumes:
+      - application/json
+      description: After registering and logging in with a default password of 12345678.
+        Students can change their password (or any field from model.Student as provided
+        by the frontend). It is a STUDENT AUTHENTICATED ROUTE. Therefore, it uses
+        the access token gotten from LoginStudentHandler and VerifyPhoneLoginStudentHandler
+        as bearer token.
+      parameters:
+      - description: password
+        in: body
+        name: HighSchool
+        required: true
+        schema:
+          $ref: '#/definitions/model.Student'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully Updated
+          schema:
+            type: string
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "500":
+          description: internal server error
+          schema:
+            type: string
+      summary: This is used to update student's profile
+      tags:
+      - Student
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
