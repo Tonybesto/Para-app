@@ -5,6 +5,7 @@ services:
     ports:
       - 8080:8080
     environment:
+      GIN_MODE: "release"
       LOCAL: "true"
       PORT: 8080
       DATABASE_URL: postgresql://postgres:donotshare@postgresql/paramount?sslmode=disable
